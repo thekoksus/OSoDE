@@ -1,4 +1,4 @@
-_G.OSoDL = {
+_G.OSoDE = {
   version = "beta 1",
 }
 
@@ -7,9 +7,9 @@ local function log(...)
   sleep(0)
 end
 
-log("OSoDL by Ale32bit")
+log("OSoDE by Ale32bit")
 log("VFS by MultMine")
-log("Starting OSoDL "..OSoDL.version.."...")
+log("Starting OSoDE "..OSoDE.version.."...")
 
 if not fs.exists("/vfs") then
   local vfs = fs.open("/vfs","w")
@@ -31,11 +31,11 @@ if k then
 end
 
 if fs.exists("/disk") and fs.isDir("/disk") then
-  if fs.exists("/disk/OSoDL") then
-    dofile("/disk/OSoDL")
+  if fs.exists("/disk/OSoDE") then
+    dofile("/disk/OSoDE")
     OSoDL.name = name
     OSoDL.boot = start
-    log("Starting Up " ..OSoDL.name)
+    log("Starting Up " ..OSoDE.name)
   else
     log("No medium found")
     return
@@ -91,11 +91,11 @@ local ok, err = pcall(function()
 end)
 _G.fs = fs.native()
 if not ok then
-  log(OSoDL.name.." crashed")
+  log(OSoDE.name.." crashed")
   printError(err)
-  log("Tip: Reboot and restart OSoDL")
+  log("Tip: Reboot and restart OSoDE")
 end
 os.shutdown = oldShutdown
 os.reboot = oldReboot
 
-log(OSoDL.name.." terminated")
+log(OSoDE.name.." terminated")
