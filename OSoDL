@@ -96,3 +96,5 @@ if not ok then
 end
 os.shutdown = oldShutdown
 os.reboot = oldReboot
+
+log(OSoDL.name.." terminated")
