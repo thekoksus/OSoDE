@@ -93,6 +93,7 @@ _G.fs = fs.native()
 if not ok then
   log(OSoDL.name.." crashed")
   printError(err)
+  log("Tip: Reboot and restart OSoDL")
 end
 os.shutdown = oldShutdown
 os.reboot = oldReboot
