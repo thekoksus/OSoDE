@@ -33,8 +33,8 @@ end
 if fs.exists("/disk") and fs.isDir("/disk") then
   if fs.exists("/disk/OSoDE") then
     dofile("/disk/OSoDE")
-    OSoDL.name = name
-    OSoDL.boot = start
+    OSoDE.name = name
+    OSoDE.boot = start
     log("Starting Up " ..OSoDE.name)
   else
     log("No medium found")
