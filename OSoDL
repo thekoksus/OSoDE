@@ -1,7 +1,13 @@
 _G.OSoDL = {
   version = "beta 1",
 }
-print("Starting Up...")
+
+local function log(...)
+  print(...)
+  sleep(0)
+end
+
+log("Starting Up...")
 sleep(0)
 
 if not fs.exists("/vfs") then
@@ -10,15 +16,15 @@ if not fs.exists("/vfs") then
   vfs.write(source.readAll())
   vfs.close()
   source.close()
-  print("Installed VFS")
+  log("Installed VFS")
   sleep(0)
 end
 
 local k = pcall(function() fs.delete("/disk") end)
 if k then
   if fs.exists("/disk") then
-    print("Fixed duplicates...")
-    print("Rebooting")
+    log("Fixed duplicates...")
+    log("Rebooting")
     sleep(2)
     os.reboot()
   end
@@ -29,14 +35,14 @@ if fs.exists("/disk") and fs.isDir("/disk") then
     dofile("/disk/OSoDL")
     OSoDL.name = name
     OSoDL.boot = start
-    print("Starting Up " ..OSoDL.name)
+    log("Starting Up " ..OSoDL.name)
     sleep(0)
   else
-    print("No medium found")
+    log("No medium found")
     return
   end
 else
-  print("No medium found")
+  log("No medium found")
   return
 end
 
@@ -75,12 +81,18 @@ f.close()
 --end
 
 fs.setRoot(fs.redirectProxy(fs.native(),"/disk/data"))
+
+term.setBackgroundColor(colors.black)
+term.setTextColor(colors.white)
+term.clear()
+term.setCursorPos(1,1)
+
 local ok, err = pcall(function()
   setfenv(loadstring(script),getfenv())()
 end)
 _G.fs = fs.native()
 if not ok then
-  print(OSoDL.name.." crashed")
+  log(OSoDL.name.." crashed")
   printError(err)
 end
 os.shutdown = oldShutdown
