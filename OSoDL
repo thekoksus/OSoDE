@@ -7,8 +7,9 @@ local function log(...)
   sleep(0)
 end
 
+log("OSoDL by Ale32bit")
+log("VFS by MultMine")
 log("Starting Up...")
-sleep(0)
 
 if not fs.exists("/vfs") then
   local vfs = fs.open("/vfs","w")
@@ -17,7 +18,6 @@ if not fs.exists("/vfs") then
   vfs.close()
   source.close()
   log("Installed VFS")
-  sleep(0)
 end
 
 local k = pcall(function() fs.delete("/disk") end)
@@ -36,7 +36,6 @@ if fs.exists("/disk") and fs.isDir("/disk") then
     OSoDL.name = name
     OSoDL.boot = start
     log("Starting Up " ..OSoDL.name)
-    sleep(0)
   else
     log("No medium found")
     return
