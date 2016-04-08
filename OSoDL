@@ -9,7 +9,7 @@ end
 
 log("OSoDL by Ale32bit")
 log("VFS by MultMine")
-log("Starting Up...")
+log("Starting OSoDL "..OSoDL.version.."...")
 
 if not fs.exists("/vfs") then
   local vfs = fs.open("/vfs","w")
