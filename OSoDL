@@ -1,0 +1,87 @@
+_G.OSoDL = {
+  version = "beta 1",
+}
+print("Starting Up...")
+sleep(0)
+
+if not fs.exists("/vfs") then
+  local vfs = fs.open("/vfs","w")
+  local source = http.get("https://raw.github.com/MultHub/Aurora/master/aurorasrc/vfs")
+  vfs.write(source.readAll())
+  vfs.close()
+  source.close()
+  print("Installed VFS")
+  sleep(0)
+end
+
+local k = pcall(function() fs.delete("/disk") end)
+if k then
+  if fs.exists("/disk") then
+    print("Fixed duplicates...")
+    print("Rebooting")
+    sleep(2)
+    os.reboot()
+  end
+end
+
+if fs.exists("/disk") and fs.isDir("/disk") then
+  if fs.exists("/disk/OSoDL") then
+    dofile("/disk/OSoDL")
+    OSoDL.name = name
+    OSoDL.boot = start
+    print("Starting Up " ..OSoDL.name)
+    sleep(0)
+  else
+    print("No medium found")
+    return
+  end
+else
+  print("No medium found")
+  return
+end
+
+if not fs.exists("/disk/data") then
+  if fs.isDir("/disk/data") then
+    fs.delete("/disk/data")
+  end
+  fs.makeDir("/disk/data")
+end
+
+if not fs.exists("/disk/data/rom") then
+  fs.copy("/rom","/disk/data/rom")
+end
+
+sleep(1)
+
+local oldShutdown = os.shutdown
+local oldReboot = os.reboot
+
+function os.shutdown()
+  return false
+end
+
+function os.reboot()
+  return false
+end
+
+dofile("/vfs")
+local f = fs.open("/disk/data/rom/startup","r")
+local script = f.readAll()
+f.close()
+
+--local oldFsrom = fs.isReadOnly
+--function _G.fs.isReadOnly(dir)
+  --if shell.resolve(dir) == "rom" then
+--end
+
+fs.setRoot(fs.redirectProxy(fs.native(),"/disk/data"))
+local ok, err = pcall(function()
+  setfenv(loadstring(script),getfenv())()
+end)
+_G.fs = fs.native()
+if not ok then
+  print(OSoDL.name.." crashed")
+  printError(err)
+end
+os.shutdown = oldShutdown
+os.reboot = oldReboot
