@@ -1,10 +1,23 @@
+local args = {...}
 _G.OSoDE = {
-  version = "beta 1",
+  version = "beta 2",
 }
 
 local function log(...)
-  print(...)
+  print("[OSoDE] ",...)
   sleep(0)
+end
+
+local function logError(...)
+  printError("[OSoDE] ",...)
+  sleep(0)
+end
+
+if #args > 0 then
+  OSoDE.path = args[1]
+else
+  print("Usage: OSoDE <directory>")
+  return
 end
 
 log("OSoDE by Ale32bit")
@@ -20,19 +33,9 @@ if not fs.exists("/vfs") then
   log("Installed VFS")
 end
 
-local k = pcall(function() fs.delete("/disk") end)
-if k then
-  if fs.exists("/disk") then
-    log("Fixed duplicates...")
-    log("Rebooting")
-    sleep(2)
-    os.reboot()
-  end
-end
-
-if fs.exists("/disk") and fs.isDir("/disk") then
-  if fs.exists("/disk/OSoDE") then
-    dofile("/disk/OSoDE")
+if fs.exists(OSoDE.path) and fs.isDir(OSoDE.path) then
+  if fs.exists(OSoDE.path.."/OSoDE") then
+    dofile(OSoDE.path.."/OSoDE")
     OSoDE.name = name
     OSoDE.boot = start
     log("Starting Up " ..OSoDE.name)
@@ -45,15 +48,15 @@ else
   return
 end
 
-if not fs.exists("/disk/data") then
-  if fs.isDir("/disk/data") then
-    fs.delete("/disk/data")
+if not fs.exists(OSoDE.path.."/data") then
+  if fs.isDir(OSoDE.path.."/data") then
+    fs.delete(OSoDE.path.."/data")
   end
-  fs.makeDir("/disk/data")
+  fs.makeDir(OSoDE.path.."/data")
 end
 
-if not fs.exists("/disk/data/rom") then
-  fs.copy("/rom","/disk/data/rom")
+if not fs.exists(OSoDE.path.."/data/rom") then
+  fs.copy("/rom",OSoDE.path.."/data/rom")
 end
 
 sleep(1)
@@ -70,16 +73,15 @@ function os.reboot()
 end
 
 dofile("/vfs")
-local f = fs.open("/disk/data/rom/startup","r")
+
+local f = fs.open(OSoDE.path.."/data/rom/startup","r")
 local script = f.readAll()
 f.close()
 
---local oldFsrom = fs.isReadOnly
---function _G.fs.isReadOnly(dir)
-  --if shell.resolve(dir) == "rom" then
---end
+fs.setRoot(fs.redirectProxy(fs.native(),OSoDE.path.."/data"))
 
-fs.setRoot(fs.redirectProxy(fs.native(),"/disk/data"))
+local fsNative = fs.native()
+_G.fs.native = nil
 
 term.setBackgroundColor(colors.black)
 term.setTextColor(colors.white)
@@ -89,11 +91,15 @@ term.setCursorPos(1,1)
 local ok, err = pcall(function()
   setfenv(loadstring(script),getfenv())()
 end)
-_G.fs = fs.native()
+term.setBackgroundColor(colors.black)
+term.setTextColor(colors.white)
+term.clear()
+term.setCursorPos(1,1)
+_G.fs = fsNative
 if not ok then
   log(OSoDE.name.." crashed")
-  printError(err)
-  log("Tip: Reboot and restart OSoDE")
+  logError(err)
+  log("Tip: Reboot computer and restart OSoDE")
 end
 os.shutdown = oldShutdown
 os.reboot = oldReboot
