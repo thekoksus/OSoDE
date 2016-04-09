@@ -1,6 +1,6 @@
 local args = {...}
 _G.OSoDE = {
-  version = "beta 2",
+  version = "beta 3",
 }
 
 local function log(...)
@@ -63,18 +63,21 @@ sleep(1)
 
 local oldShutdown = os.shutdown
 local oldReboot = os.reboot
+local oldShell = shell
 
 function os.shutdown()
-  return false
+  return
 end
 
 function os.reboot()
-  return false
+  return
 end
+
+shell = nil
 
 dofile("/vfs")
 
-local f = fs.open(OSoDE.path.."/data/rom/startup","r")
+local f = fs.open(OSoDE.path.."/data/rom/programs/shell","r")
 local script = f.readAll()
 f.close()
 
@@ -103,5 +106,6 @@ if not ok then
 end
 os.shutdown = oldShutdown
 os.reboot = oldReboot
+shell = oldShell
 
 log(OSoDE.name.." terminated")
