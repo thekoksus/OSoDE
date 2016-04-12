@@ -1,6 +1,6 @@
 local args = {...}
 _G.OSoDE = {
-  version = "beta 3",
+  version = "beta 4",
 }
 
 local function log(...)
@@ -11,6 +11,21 @@ end
 local function logError(...)
   printError("[OSoDE] ",...)
   sleep(0)
+end
+
+local function makeNewPath(path,name)
+	if not name then
+		error("a nil value",2)
+	end
+	if fs.exists(path) then
+		fs.delete(path)
+	end
+	fs.makeDir(path)
+	local f = fs.open(path.."/OSoDE","w")
+	f.write('name = "'..name..'"')
+	f.close()
+	log(name," created")
+	OSoDE.name = name
 end
 
 if #args > 0 then
@@ -33,19 +48,17 @@ if not fs.exists("/vfs") then
   log("Installed VFS")
 end
 
-if fs.exists(OSoDE.path) and fs.isDir(OSoDE.path) then
-  if fs.exists(OSoDE.path.."/OSoDE") then
-    dofile(OSoDE.path.."/OSoDE")
-    OSoDE.name = name
-    OSoDE.boot = start
-    log("Starting Up " ..OSoDE.name)
-  else
-    log("No medium found")
-    return
-  end
+if fs.exists(OSoDE.path.."/OSoDE") then
+	dofile(OSoDE.path.."/OSoDE")
+	OSoDE.name = name
+	log("Starting up "..OSoDE.name)
 else
-  log("No medium found")
-  return
+	if args[2] then
+		makeNewPath(OSoDE.path,args[2])
+	else
+		logError("New path: OSoDE <path> <name>")
+		return
+	end
 end
 
 if not fs.exists(OSoDE.path.."/data") then
