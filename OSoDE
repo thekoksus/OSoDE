@@ -105,7 +105,9 @@ end
 local ok, err = pcall(function()
   local co
   local function start()
-    co = coroutine.create(setfenv(loadstring(script), getfenv()))
+    local env = setmetatable({}, {__index = getfenv()})
+    env._G = env
+    co = coroutine.create(setfenv(loadstring(script), env))
     term.setBackgroundColor(colors.black)
     term.setTextColor(colors.white)
     term.clear()
