@@ -79,11 +79,11 @@ local oldReboot = os.reboot
 local oldShell = shell
 
 function os.shutdown()
-  return
+  coroutine.yield("shutdown")
 end
 
 function os.reboot()
-  return
+  coroutine.yield("reboot")
 end
 
 shell = nil
@@ -94,24 +94,43 @@ local f = fs.open(OSoDE.path.."/data/rom/programs/shell","r")
 local script = f.readAll()
 f.close()
 
+local oldRoot = fs.getRoot()
 fs.setRoot(fs.redirectProxy(fs.native(),OSoDE.path.."/data"))
 
-local fsNative = fs.native()
-_G.fs.native = nil
-
-term.setBackgroundColor(colors.black)
-term.setTextColor(colors.white)
-term.clear()
-term.setCursorPos(1,1)
+local native = fs.native
+_G.fs.native = function()
+  return fs
+end
 
 local ok, err = pcall(function()
+  local co
+  local function start()
+    co = coroutine.create(setfenv(loadstring(script), getfenv()))
+    term.setBackgroundColor(colors.black)
+    term.setTextColor(colors.white)
+    term.clear()
+    term.setCursorPos(1,1)
+    coroutine.resume(co)
+  end
+  start()
+  while true do
+    if coroutine.status(co) == "dead" then
+      return
+    end
+    local rtn = {coroutine.resume(co, os.pullEvent())}
+    if rtn[2] == "reboot" then
+      start()
+    elseif rtn[2] == "shutdown" then
+      return
+    end
+  end
   setfenv(loadstring(script),getfenv())()
 end)
 term.setBackgroundColor(colors.black)
 term.setTextColor(colors.white)
 term.clear()
 term.setCursorPos(1,1)
-_G.fs = fsNative
+_G.fs.native = native
 if not ok then
   log(OSoDE.name.." crashed")
   logError(err)
