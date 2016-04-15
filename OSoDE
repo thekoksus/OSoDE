@@ -95,7 +95,7 @@ local script = f.readAll()
 f.close()
 
 local oldRoot = fs.getRoot()
-fs.setRoot(fs.redirectProxy(fs.native(),OSoDE.path.."/data"))
+fs.setRoot(fs.redirectProxy(fs.getProxy(OSoDE.path.."/data"), fs.getProxiedPath(OSoDE.path.."/data")))
 
 local native = fs.native
 _G.fs.native = function()
