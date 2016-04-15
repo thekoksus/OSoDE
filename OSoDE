@@ -130,6 +130,7 @@ term.setBackgroundColor(colors.black)
 term.setTextColor(colors.white)
 term.clear()
 term.setCursorPos(1,1)
+fs.setRoot(oldRoot)
 _G.fs.native = native
 if not ok then
   log(OSoDE.name.." crashed")
