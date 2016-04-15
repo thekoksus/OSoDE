@@ -1,6 +1,6 @@
 local args = {...}
 _G.OSoDE = {
-  version = "beta 4",
+  version = "beta 5",
 }
 
 local function log(...)
