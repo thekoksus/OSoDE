@@ -5,6 +5,6 @@
 run `wget https://raw.github.com/Ale32bit/OSoDE/master/OSoDE OSoDE` on computer
 then run OSoDE to start
 
-## How to make an OS for OSoDL
+## How to make an OS for OSoDE
 run OSoDE <path> <name>
 Now you can install the OS using any installer
