@@ -86,6 +86,10 @@ function os.reboot()
   coroutine.yield("reboot")
 end
 
+function OSoDE.terminate()
+  coroutine.yield("terminate")
+end
+
 shell = nil
 
 dofile("/vfs")
@@ -123,6 +127,8 @@ local ok, err = pcall(function()
     if rtn[2] == "reboot" then
       start()
     elseif rtn[2] == "shutdown" then
+      return
+    elseif rtn[2] == "terminate" then
       return
     end
   end
