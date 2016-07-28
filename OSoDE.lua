@@ -39,8 +39,8 @@ log("OSoDE by Ale32bit")
 log("VFS by MultMine")
 log("Starting OSoDE "..OSoDE.version.."...")
 
-if not fs.exists("/vfs") then
-  local vfs = fs.open("/vfs","w")
+if not fs.exists("/.OSoDEdata/vfs") then
+  local vfs = fs.open("/.OSoDEdata/vfs","w")
   local source = http.get("https://raw.github.com/MultHub/Aurora/master/aurorasrc/vfs")
   vfs.write(source.readAll())
   vfs.close()
@@ -92,7 +92,7 @@ end
 
 shell = nil
 
-dofile("/vfs")
+dofile("/.OSoDEdata/vfs")
 
 local f = fs.open(OSoDE.path.."/data/rom/programs/shell","r")
 local script = f.readAll()
