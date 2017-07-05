@@ -94,7 +94,7 @@ shell = nil
 
 dofile("/.OSoDEdata/vfs")
 
-local f = fs.open(OSoDE.path.."/data/rom/programs/shell","r")
+local f = fs.open(OSoDE.path.."/data/rom/programs/shell.lua","r")
 local script = f.readAll()
 f.close()
 
